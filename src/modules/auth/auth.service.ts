@@ -1,22 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthPayloadDto } from './dtos/auth.dto';
-
-const fakeUsers = [
-  { id: 1, username: 'hieu', password: 'hieu' },
-  { id: 2, username: 'jack', password: 'password' },
-];
+import { UsersService } from '../users/users.service';
+import * as bcrypt from 'bcrypt';
+import { CreateUserRes } from '../users/dtos/create-user';
+import { UsersEntity } from '../users/user.entity';
+import { ReqLogin } from './dtos/auth.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private readonly userService: UsersService,
+  ) {}
 
-  validateUser({ username, password }: AuthPayloadDto) {
-    const findUser = fakeUsers.find((user) => user.username === username);
-    if (!findUser) return null;
-    if (password === findUser.password) {
-      const { password, ...user } = findUser;
-      return this.jwtService.sign(user);
+  async validateUser({ email, password }: ReqLogin) {
+    const user = await this.userService.findUserByEmail(email);
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const { password, ...result } = user;
+      return result;
     }
+    if (user) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    return null;
+  }
+
+  async login(user: CreateUserRes) {
+    const payload = { user };
+    return {
+      ...user,
+      accessToken: this.jwtService.sign(payload),
+      refeshToken: this.jwtService.sign(payload, { expiresIn: '1d' }),
+    };
   }
 }
