@@ -18,7 +18,7 @@ export class UsersService {
     });
 
     if (findUser) {
-      throw new ConflictException(`User ${userRegister.email} already exists`);
+      throw new ConflictException(`Email already exists`);
     }
 
     const saltRounds = 10;
