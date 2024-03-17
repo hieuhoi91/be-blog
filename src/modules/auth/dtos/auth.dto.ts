@@ -1,10 +1,11 @@
-import { Expose, Transform } from 'class-transformer';
-import { IsEmail, IsString } from 'class-validator';
+import { Expose } from 'class-transformer';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class Token {
-  constructor(accessToken: string, refreshToken: string) {
+  constructor(accessToken: string, refreshToken: string, expiresIn: string) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
+    this.expiresIn = expiresIn;
   }
 
   @Expose()
@@ -14,11 +15,29 @@ export class Token {
   @Expose()
   @IsString()
   refreshToken: string;
+
+  @Expose()
+  @IsString()
+  expiresIn: string;
 }
+
+export class RegisterUserDto {
+  @IsString()
+  username: string;
+
+  @IsString()
+  email: string;
+
+  @IsString()
+  password: string;
+}
+
 export class ReqLogin {
+  @IsNotEmpty()
   @IsEmail()
   email: string;
 
+  @IsNotEmpty()
   @IsString()
   password: string;
 }

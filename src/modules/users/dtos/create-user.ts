@@ -24,4 +24,10 @@ export class CreateUserRes {
   @Expose()
   @IsEmail()
   email: string;
+
+  @IsString()
+  password: string;
+
+  @IsString()
+  avatar: string;
 }

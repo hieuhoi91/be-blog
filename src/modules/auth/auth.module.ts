@@ -14,11 +14,12 @@ import { UsersService } from '../users/users.service';
     TypeOrmModule.forFeature([UsersEntity]),
     PassportModule,
     JwtModule.register({
-      secret: 'hieuhoi91',
+      global: true,
+      secret: `${process.env.SECRET_KEY}`,
       signOptions: { expiresIn: '1h' },
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, UsersService],
+  providers: [AuthService, UsersService, LocalStrategy, JwtStrategy],
 })
 export class AuthModule {}

@@ -1,17 +1,23 @@
 import {
-  Body,
   Controller,
   Get,
   NotFoundException,
   Param,
-  Post,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserReq } from './dtos/create-user';
+import { UsersEntity } from './user.entity';
+import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Get('all')
+  findAllUsers(): Promise<UsersEntity[]> {
+    return this.usersService.getAllUsers();
+  }
 
   @Get('/:id')
   findUser(@Param('id') id: string) {
