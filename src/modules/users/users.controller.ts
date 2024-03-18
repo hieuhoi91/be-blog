@@ -8,12 +8,13 @@ import {
 import { UsersService } from './users.service';
 import { UsersEntity } from './user.entity';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
+import { LocalAuthGuard } from '../auth/guard/local.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(LocalAuthGuard)
   @Get('all')
   findAllUsers(): Promise<UsersEntity[]> {
     return this.usersService.getAllUsers();

@@ -38,7 +38,7 @@ export class AuthService {
     });
   }
 
-  async login(reqLogin: ReqLogin): Promise<ResLogin> {
+  async authentication(reqLogin: ReqLogin): Promise<any> {
     const user = await this.userRepository.findOne({
       where: { email: reqLogin.email },
     });
@@ -52,6 +52,12 @@ export class AuthService {
         HttpStatus.UNAUTHORIZED,
       );
     }
+
+    return user;
+  }
+
+  async login(reqLogin: ReqLogin): Promise<ResLogin> {
+    const user = await this.authentication(reqLogin);
     //generate access token and refresh token
     const payload = { id: user.id, email: user.email };
     const token = await this.generateToken(payload);
