@@ -6,7 +6,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UsersEntity } from './user.entity';
+import { UserEntity } from './user.entity';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { LocalAuthGuard } from '../auth/guard/local.guard';
 
@@ -16,7 +16,7 @@ export class UsersController {
 
   @UseGuards(LocalAuthGuard)
   @Get('all')
-  findAllUsers(): Promise<UsersEntity[]> {
+  findAllUsers(): Promise<UserEntity[]> {
     return this.usersService.getAllUsers();
   }
 

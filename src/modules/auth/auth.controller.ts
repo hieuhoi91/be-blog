@@ -1,9 +1,9 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserReq, CreateUserRes } from '../users/dtos/create-user';
+import { CreateUserReq, CreateUserRes } from '../users/dto/create-user';
 import { Serialize } from 'src/interceptor/serialize.interceptor';
-import { ReqLogin, ResLogin, Token } from './dtos/auth.dto';
-import { UsersEntity } from '../users/user.entity';
+import { ReqLogin, ResLogin, Token } from './dto/auth.dto';
+import { UserEntity } from '../users/user.entity';
 import { LocalAuthGuard } from './guard/local.guard';
 
 @Controller('auth')
@@ -12,7 +12,7 @@ export class AuthController {
 
   @Serialize(CreateUserRes)
   @Post('register')
-  async createUser(@Body() req: CreateUserReq): Promise<UsersEntity> {
+  async createUser(@Body() req: CreateUserReq): Promise<UserEntity> {
     const users = await this.authService.register(req);
     return users;
   }

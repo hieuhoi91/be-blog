@@ -5,7 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { UsersEntity } from './modules/users/user.entity';
+import { UserEntity } from './modules/users/user.entity';
+import { PostsModule } from './modules/posts/posts.module';
+import { PostEntity } from './modules/posts/post.entity';
+import { UploadService } from './modules/upload/upload.service';
+import { UploadController } from './modules/upload/upload.controller';
+import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
   imports: [
@@ -23,12 +28,14 @@ import { UsersEntity } from './modules/users/user.entity';
         username: config.get('DB_USERNAME'),
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_DATABASE'),
-        entities: [UsersEntity],
+        entities: [UserEntity, PostEntity],
         synchronize: true, // Chỉ dùng trong môi trường development
       }),
     }),
     AuthModule,
     UsersModule,
+    PostsModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

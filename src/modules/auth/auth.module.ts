@@ -6,12 +6,12 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersEntity } from '../users/user.entity';
+import { UserEntity } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UsersEntity]),
+    TypeOrmModule.forFeature([UserEntity]),
     PassportModule,
     JwtModule.register({
       global: true,

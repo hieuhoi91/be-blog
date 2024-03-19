@@ -2,11 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { PostEntity } from '../posts/post.entity';
 
 @Entity({ name: 'users' })
-export class UsersEntity {
+export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -33,4 +35,7 @@ export class UsersEntity {
 
   @CreateDateColumn()
   updated_at: Date;
+
+  @OneToMany(() => PostEntity, (post) => post.user)
+  posts: PostEntity[];
 }

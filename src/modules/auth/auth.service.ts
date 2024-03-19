@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UsersEntity } from '../users/user.entity';
-import { RegisterUserDto, ReqLogin, ResLogin } from './dtos/auth.dto';
+import { UserEntity } from '../users/user.entity';
+import { RegisterUserDto, ReqLogin, ResLogin } from './dto/auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
@@ -15,13 +15,13 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(UsersEntity)
-    private userRepository: Repository<UsersEntity>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
 
-  async register(resgisterUser: RegisterUserDto): Promise<UsersEntity> {
+  async register(resgisterUser: RegisterUserDto): Promise<UserEntity> {
     const findUser = await this.userRepository.findOneBy({
       email: resgisterUser.email,
     });

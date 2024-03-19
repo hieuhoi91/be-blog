@@ -1,7 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Injectable } from '@nestjs/common';
-import { ReqLogin } from './dtos/auth.dto';
+import { ReqLogin } from './dto/auth.dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -14,8 +14,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(req: ReqLogin) {
-    console.log(req);
-
     return req;
   }
 }
