@@ -8,8 +8,6 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserEntity } from './modules/users/user.entity';
 import { PostsModule } from './modules/posts/posts.module';
 import { PostEntity } from './modules/posts/post.entity';
-import { UploadService } from './modules/upload/upload.service';
-import { UploadController } from './modules/upload/upload.controller';
 import { UploadModule } from './modules/upload/upload.module';
 
 @Module({
@@ -30,6 +28,12 @@ import { UploadModule } from './modules/upload/upload.module';
         database: config.get('DB_DATABASE'),
         entities: [UserEntity, PostEntity],
         synchronize: true, // Chỉ dùng trong môi trường development
+        ssl: true,
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        },
       }),
     }),
     AuthModule,
