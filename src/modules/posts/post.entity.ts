@@ -2,8 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -14,14 +14,17 @@ export class PostEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   title: string;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
-  @Column()
+  @Column({ nullable: true })
   thumbnail: string;
+
+  @Column({ name: 'user_id' })
+  user_id: string;
 
   // @Column()
   // status: boolean;
@@ -33,5 +36,6 @@ export class PostEntity {
   updatedAt: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.posts)
+  @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 }

@@ -21,8 +21,6 @@ export class UploadService {
   }
 
   uploadStream = async (file: Express.Multer.File) => {
-    console.log(file);
-
     return new Promise<UploadApiResponse>((resolve, reject) => {
       let stream = cloudinary.uploader.upload_stream((error, result) => {
         if (result) {
