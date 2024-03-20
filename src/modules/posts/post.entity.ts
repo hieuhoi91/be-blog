@@ -14,13 +14,13 @@ export class PostEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: true })
+  @Column()
   title: string;
 
-  @Column({ nullable: true })
+  @Column()
   description: string;
 
-  @Column({ nullable: true })
+  @Column()
   thumbnail: string;
 
   @Column({ name: 'user_id' })

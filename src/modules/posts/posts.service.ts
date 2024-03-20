@@ -24,7 +24,6 @@ export class PostsService {
         thumbnail: reqCreate.thumbnail,
         user_id: userId,
       });
-      console.log(post);
 
       await this.postRepository.save(post);
     } catch (e) {

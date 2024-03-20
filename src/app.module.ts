@@ -28,12 +28,7 @@ import { UploadModule } from './modules/upload/upload.module';
         database: config.get('DB_DATABASE'),
         entities: [UserEntity, PostEntity],
         synchronize: true, // Chỉ dùng trong môi trường development
-        ssl: true,
-        extra: {
-          ssl: {
-            rejectUnauthorized: false,
-          },
-        },
+        ssl: config.get('SSL'),
       }),
     }),
     AuthModule,
