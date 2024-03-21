@@ -11,6 +11,8 @@ export class UsersService {
   ) {}
 
   async getAllUsers() {
+    console.log(process.env.SSL);
+
     return await this.usersRepository.find({
       select: [
         'id',
