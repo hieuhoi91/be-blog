@@ -9,6 +9,7 @@ import { UserEntity } from './modules/users/user.entity';
 import { PostsModule } from './modules/posts/posts.module';
 import { PostEntity } from './modules/posts/post.entity';
 import { UploadModule } from './modules/upload/upload.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { UploadModule } from './modules/upload/upload.module';
         username: config.get('DB_USERNAME'),
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_DATABASE'),
-        entities: [UserEntity, PostEntity],
+        entities: ['src/module/**/*.ts'],
+        autoLoadEntities: true,
         synchronize: true, // Chỉ dùng trong môi trường development
         ssl: Boolean(JSON.parse(config.get('SSL'))),
       }),
@@ -35,6 +37,7 @@ import { UploadModule } from './modules/upload/upload.module';
     UsersModule,
     PostsModule,
     UploadModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserEntity } from '../users/user.entity';
+import { CategoryEntity } from '../categories/category.entity';
 
 @Entity({ name: 'posts' })
 export class PostEntity {
@@ -26,6 +27,8 @@ export class PostEntity {
   @Column({ name: 'user_id' })
   user_id: string;
 
+  @Column({ name: 'category_id', nullable: true })
+  category_id: string;
   // @Column()
   // status: boolean;
 
@@ -38,4 +41,8 @@ export class PostEntity {
   @ManyToOne(() => UserEntity, (user) => user.posts)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
+
+  @ManyToOne(() => CategoryEntity, (categories) => categories.posts)
+  @JoinColumn({ name: 'category_id' })
+  categories: CategoryEntity;
 }

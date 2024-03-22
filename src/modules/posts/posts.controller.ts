@@ -20,7 +20,7 @@ export class PostsController {
   constructor(private postsService: PostsService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Post('create')
+  @Post('')
   async createPost(
     @Req() req,
     @Body() createPost: CreatePostDto,
@@ -28,6 +28,7 @@ export class PostsController {
     return await this.postsService.createPost(req.user.id, createPost);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch('/:id')
   async updatePost(@Param('id') idPost: string, @Body() attr: CreatePostDto) {
     await this.postsService.updatePost(idPost, attr);
@@ -39,6 +40,7 @@ export class PostsController {
     return await this.postsService.findPostsByUserId(userId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('/:id')
   async deletePost(@Param('id') idPost: string) {
     await this.postsService.deletePost(idPost);
