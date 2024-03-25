@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryEntity } from './category.entity';
-import { EntityNotFoundError, QueryFailedError, Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
 
 @Injectable()
@@ -32,5 +32,15 @@ export class CategoriesService {
           HttpStatus.CONFLICT,
         );
     }
+  }
+
+  async getAllCategories() {
+    return await this.categoryRepository.find({
+      select: ['id', 'name', 'description', 'slug'],
+    });
+  }
+
+  async getCategory(id: string) {
+    return this.categoryRepository.findOneBy({ id: id });
   }
 }

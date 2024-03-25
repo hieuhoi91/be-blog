@@ -1,5 +1,3 @@
-import { Expose } from 'class-transformer';
-
 export class SimpleResponse<T> {
   readonly data: T;
 

@@ -4,7 +4,6 @@ import { CreateUserReq, CreateUserRes } from '../users/dto/create-user';
 import { Serialize } from 'src/interceptor/serialize.interceptor';
 import { ReqLogin, ResLogin, Token } from './dto/auth.dto';
 import { UserEntity } from '../users/user.entity';
-import { LocalAuthGuard } from './guard/local.guard';
 
 @Controller('auth')
 export class AuthController {

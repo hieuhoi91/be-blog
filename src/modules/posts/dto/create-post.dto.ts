@@ -12,5 +12,5 @@ export class CreatePostDto {
   thumbnail: string;
 
   @IsString()
-  user: UserEntity;
+  category_id: string;
 }

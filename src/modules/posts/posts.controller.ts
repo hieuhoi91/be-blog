@@ -14,6 +14,7 @@ import {
 import { CreatePostDto } from './dto/create-post.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { PostsService } from './posts.service';
+import { SimpleResponse } from 'src/common/dto/page.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -21,11 +22,9 @@ export class PostsController {
 
   @UseGuards(JwtAuthGuard)
   @Post('')
-  async createPost(
-    @Req() req,
-    @Body() createPost: CreatePostDto,
-  ): Promise<void> {
-    return await this.postsService.createPost(req.user.id, createPost);
+  async createPost(@Req() req, @Body() createPost: CreatePostDto) {
+    const post = await this.postsService.createPost(req.user.id, createPost);
+    return new SimpleResponse(post, 'Success post created');
   }
 
   @UseGuards(JwtAuthGuard)

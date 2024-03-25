@@ -22,6 +22,7 @@ export class PostsService {
         title: reqCreate.title,
         description: reqCreate.description,
         thumbnail: reqCreate.thumbnail,
+        category_id: reqCreate.category_id,
         user_id: userId,
       });
 
