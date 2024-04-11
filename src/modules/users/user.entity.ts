@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { PostEntity } from '../posts/post.entity';
+import { CommentEntity } from '../comments/comment.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -38,4 +39,7 @@ export class UserEntity {
 
   @OneToMany(() => PostEntity, (post) => post.user)
   posts: PostEntity[];
+
+  @OneToMany(() => CommentEntity, (comments) => comments.user)
+  comments: CommentEntity[];
 }

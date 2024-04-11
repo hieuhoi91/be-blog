@@ -7,6 +7,10 @@ import { PostsModule } from './modules/posts/posts.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { TagModule } from './modules/tag/tag.module';
+import { CommentsService } from './modules/comments/comments.service';
+import { CommentsController } from './modules/comments/comments.controller';
+import { CommentsModule } from './modules/comments/comments.module';
+import { WebsocketsModule } from './modules/websockets/websockets.module';
 
 @Module({
   imports: [
@@ -25,6 +29,7 @@ import { TagModule } from './modules/tag/tag.module';
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_DATABASE'),
         entities: ['src/module/**/*.entity.ts'],
+        // logging: true,
         autoLoadEntities: true,
         synchronize: true, // Chỉ dùng trong môi trường development
         ssl: Boolean(JSON.parse(config.get('SSL'))),
@@ -36,6 +41,8 @@ import { TagModule } from './modules/tag/tag.module';
     UploadModule,
     CategoriesModule,
     TagModule,
+    CommentsModule,
+    WebsocketsModule,
   ],
 })
 export class AppModule {}

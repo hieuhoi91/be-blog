@@ -34,9 +34,19 @@ export class PostsController {
     return new HttpException('Update post successfully', HttpStatus.OK);
   }
 
-  @Get('/:id')
-  async getAllPosts(@Param('id') userId: string) {
+  @Get('/:slug')
+  async getPostBySlug(@Param('slug') slug: string) {
+    return await this.postsService.findPostBySlug(slug);
+  }
+
+  @Get('/findbyuser/:id')
+  async getAllPostsByUser(@Param('id') userId: string) {
     return await this.postsService.findPostsByUserId(userId);
+  }
+
+  @Get('/findbycategory/:id')
+  async getAllPostsByCategory(@Param('id') categoryId: string) {
+    return await this.postsService.findPostsByCategoryId(categoryId);
   }
 
   @UseGuards(JwtAuthGuard)

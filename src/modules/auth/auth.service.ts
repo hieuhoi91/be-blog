@@ -83,9 +83,22 @@ export class AuthService {
     return { accessToken, refreshToken, expiresIn: '1h' };
   }
 
-  async refreshToken(refresh_token: string) {
+  async handleVerifyToken(
+    token: string,
+  ): Promise<{ id: string; email: string }> {
     try {
-      const verify = await this.jwtService.verify(refresh_token, {
+      const payload = await this.jwtService.verify(token, {
+        secret: this.configService.get<string>('SECRET_KEY'),
+      });
+      return payload;
+    } catch (error) {
+      throw new HttpException({ message: 'Invalid' }, HttpStatus.UNAUTHORIZED);
+    }
+  }
+
+  async refreshToken(refreshToken: string) {
+    try {
+      const verify = await this.jwtService.verify(refreshToken, {
         secret: this.configService.get<string>('SECRET_KEY'),
       });
 

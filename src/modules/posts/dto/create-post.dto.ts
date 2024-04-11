@@ -9,7 +9,7 @@ export class CreatePostDto {
   description: string;
 
   @IsString()
-  thumbnail: string;
+  thumbnail_url: string;
 
   @IsString()
   category_id: string;

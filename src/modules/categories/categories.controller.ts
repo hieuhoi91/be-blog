@@ -13,7 +13,6 @@ export class CategoriesController {
     await this.categoriesService.createCategory(createReq);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   async getAllCategories() {
     return await this.categoriesService.getAllCategories();

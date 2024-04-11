@@ -20,8 +20,8 @@ export class PostsService {
     try {
       const post = this.postRepository.create({
         title: reqCreate.title,
+        thumbnail: reqCreate.thumbnail_url,
         description: reqCreate.description,
-        thumbnail: reqCreate.thumbnail,
         category_id: reqCreate.category_id,
         user_id: userId,
       });
@@ -42,12 +42,50 @@ export class PostsService {
     return await this.postRepository.save(post);
   }
 
+  async findPostBySlug(slug: string): Promise<PostEntity> {
+    try {
+      const posts = await this.postRepository.findOne({
+        where: { slug: slug },
+        relations: ['user'],
+        select: {
+          user: {
+            id: true,
+            username: true,
+            avatar: true,
+          },
+        },
+      });
+      return posts;
+    } catch (e) {
+      throw new BadRequestException(e.message);
+    }
+  }
+
   async findPostsByUserId(userId: string): Promise<PostEntity[]> {
     try {
       // join user by user_id
       const posts = await this.postRepository.find({
         where: { user_id: userId },
         relations: ['user'],
+      });
+      return posts;
+    } catch (e) {
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async findPostsByCategoryId(categoryId: string): Promise<PostEntity[]> {
+    try {
+      const posts = await this.postRepository.find({
+        where: { category_id: categoryId },
+        relations: ['user'],
+        select: {
+          user: {
+            id: true,
+            username: true,
+            avatar: true,
+          },
+        },
       });
       return posts;
     } catch (e) {
