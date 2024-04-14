@@ -1,18 +1,7 @@
-import { IsString } from 'class-validator';
-
-export class Messsage {
-  constructor(user_id: string, post_id: string, message: string) {
-    this.user_id = user_id;
-    this.post_id = post_id;
-    this.message = message;
-  }
-
-  @IsString()
+export class Comment {
   user_id: string;
-
-  @IsString()
-  post_id: string;
-
-  @IsString()
+  username: string;
+  avatar?: string;
+  createAt: string;
   message: string;
 }

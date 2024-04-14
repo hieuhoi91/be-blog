@@ -10,7 +10,7 @@ import {
 import { PostEntity } from '../posts/post.entity';
 import { UserEntity } from '../users/user.entity';
 
-@Entity('comment')
+@Entity({ name: 'comments' })
 export class CommentEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -18,10 +18,10 @@ export class CommentEntity {
   @Column()
   comment: string;
 
-  @Column()
+  @Column({ name: 'user_id' })
   user_id: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'post_id' })
   post_id: string;
 
   @CreateDateColumn()
@@ -36,5 +36,5 @@ export class CommentEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.comments)
   @JoinColumn({ name: 'user_id' })
-  user: PostEntity;
+  user: UserEntity;
 }

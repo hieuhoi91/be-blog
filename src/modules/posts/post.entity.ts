@@ -23,7 +23,7 @@ export class PostEntity {
   @Column()
   title: string;
 
-  @Column({ type: 'text', nullable: false })
+  @Column({ type: 'text' })
   slug: string;
 
   @Column()
@@ -35,7 +35,7 @@ export class PostEntity {
   @Column({ name: 'user_id' })
   user_id: string;
 
-  @Column({ name: 'category_id', nullable: true })
+  @Column({ name: 'category_id' })
   category_id: string;
   // @Column()
   // status: boolean;

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommentEntity } from './comment.entity';
 import { Repository } from 'typeorm';
-import { Messsage } from '../websockets/dto/message.dto';
 
 @Injectable()
 export class CommentsService {
@@ -11,23 +10,35 @@ export class CommentsService {
     private commentRepository: Repository<CommentEntity>,
   ) {}
 
-  async createComment(comment: Messsage): Promise<void> {
+  async createComment(
+    user_id: string,
+    message: string,
+    post_id: string,
+  ): Promise<void> {
     const data = this.commentRepository.create({
-      comment: comment.message,
-      user_id: comment.user_id,
-      post_id: comment.post_id,
+      comment: message,
+      user_id: user_id,
+      post_id: post_id,
     });
 
     this.commentRepository.save(data);
   }
 
-  async getCommentsbyPostId(postId: string): Promise<CommentEntity[]> {
-    return this.commentRepository.find({
+  async getCommentsByPostId(postId: string): Promise<CommentEntity[]> {
+    // Fetch comments with user information
+    const comments = await this.commentRepository.find({
       where: { post_id: postId },
-      take: 10,
-      order: {
-        createdAt: 'ASC', // "DESC"
+      relations: ['user'], // Eagerly load user data
+      select: {
+        user: {
+          // Add other desired user fields here (if applicable)
+          id: true,
+          username: true,
+          avatar: true,
+        },
       },
     });
+
+    return comments;
   }
 }

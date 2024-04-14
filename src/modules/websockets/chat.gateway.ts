@@ -9,7 +9,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { AuthService } from '../auth/auth.service';
 import { CommentsService } from '../comments/comments.service';
-import { Messsage } from './dto/message.dto';
+import { Comment } from './dto/message.dto';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway {
@@ -31,23 +31,17 @@ export class ChatGateway {
 
   @SubscribeMessage('sendMessage')
   async handleMessage(
-    @MessageBody() data: { roomId: string; message: string },
+    @MessageBody() data: { roomId: string; comment: Comment },
     @ConnectedSocket() socket: Socket,
   ): Promise<void> {
-    console.log(data);
+    const { roomId, comment } = data;
+    console.log(roomId, comment);
 
-    const { roomId, message } = data;
-    this.server.to(roomId).emit('message', message);
-    // const user = await this.authService.handleVerifyToken(
-    //   socket.handshake.auth.token,
-    // );
-    // console.log(user.id);
-
-    // let listComment = [];
-
-    // const comment = new Messsage(user.id, roomId, message);
-    // listComment.push(comment);
-    // console.log(listComment);
-    // return this.commentService.createComment(comment);
+    this.server.to(roomId).emit('comment', comment);
+    return this.commentService.createComment(
+      comment.user_id,
+      comment.message,
+      roomId,
+    );
   }
 }
