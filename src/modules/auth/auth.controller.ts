@@ -24,6 +24,8 @@ export class AuthController {
     return new ResLogin(
       user.id,
       user.username,
+      user.avatar,
+      user.role,
       new Token(
         user.token.accessToken,
         user.token.refreshToken,

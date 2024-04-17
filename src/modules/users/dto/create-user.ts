@@ -10,6 +10,12 @@ export class CreateUserReq {
 
   @IsString()
   password: string;
+
+  @IsString()
+  role: string;
+
+  @IsString()
+  avatar: string;
 }
 
 export class CreateUserRes {

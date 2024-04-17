@@ -31,6 +31,9 @@ export class UserEntity {
   @Column({ default: 1 })
   status: number;
 
+  @Column()
+  role: string;
+
   @CreateDateColumn()
   created_at: Date;
 

@@ -7,7 +7,6 @@ import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 export class CategoriesController {
   constructor(private categoriesService: CategoriesService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   async createCategory(@Body() createReq: CreateCategoryDto) {
     await this.categoriesService.createCategory(createReq);
@@ -18,7 +17,6 @@ export class CategoriesController {
     return await this.categoriesService.getAllCategories();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('/:id')
   async getCategory(@Param('id') id: string) {
     return await this.categoriesService.getCategory(id);

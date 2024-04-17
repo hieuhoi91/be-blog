@@ -33,6 +33,8 @@ export class AuthService {
     const hashPassword = await this.hashPassword(resgisterUser.password);
     return await this.userRepository.save({
       ...resgisterUser,
+      role: resgisterUser.role,
+      avartar: resgisterUser.avatar,
       refresh_token: 'refresh_token_string',
       password: hashPassword,
     });

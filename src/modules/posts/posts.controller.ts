@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -15,6 +16,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { PostsService } from './posts.service';
 import { SimpleResponse } from 'src/common/dto/page.dto';
+import { PostEntity } from './post.entity';
 
 @Controller('posts')
 export class PostsController {
@@ -54,5 +56,10 @@ export class PostsController {
   async deletePost(@Param('id') idPost: string) {
     await this.postsService.deletePost(idPost);
     return new HttpException('Delete post successfully', HttpStatus.OK);
+  }
+
+  @Get()
+  async searchPost(@Query('title') title: string): Promise<PostEntity[]> {
+    return await this.postsService.searchByName(title);
   }
 }

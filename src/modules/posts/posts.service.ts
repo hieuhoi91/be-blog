@@ -96,4 +96,18 @@ export class PostsService {
   async deletePost(postId: string) {
     return await this.postRepository.delete(postId);
   }
+
+  async searchByName(query: string): Promise<PostEntity[]> {
+    return (
+      this.postRepository
+        .createQueryBuilder('post')
+        .where('LOWER(post.title) ILIKE :title', {
+          title: `%${query.toLowerCase()}%`,
+        })
+        // .orWhere('LOWER(post.description) ILIKE :title', {
+        //   title: `%${query.toLowerCase()}%`,
+        // })
+        .getMany()
+    );
+  }
 }

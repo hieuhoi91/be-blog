@@ -30,6 +30,12 @@ export class RegisterUserDto {
 
   @IsString()
   password: string;
+
+  @IsString()
+  role: string;
+
+  @IsString()
+  avatar: string;
 }
 
 export class ReqLogin {
@@ -43,10 +49,16 @@ export class ReqLogin {
 }
 
 export class ResLogin {
-  constructor(id: string, username: string, token: Token) {
+  constructor(
+    id: string,
+    username: string,
+    avatar: string,
+    role: string,
+    token: Token,
+  ) {
     this.id = id;
     this.username = username;
-    this.token = token;
+    (this.avatar = avatar), (this.role = role), (this.token = token);
   }
 
   @Expose()
@@ -56,6 +68,14 @@ export class ResLogin {
   @Expose()
   @IsString()
   username: string;
+
+  @Expose()
+  @IsString()
+  avatar: string;
+
+  @Expose()
+  @IsString()
+  role: string;
 
   @Expose()
   token: Token;
