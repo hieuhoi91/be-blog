@@ -46,7 +46,7 @@ import { RedisClientOptions } from 'redis';
         // logging: true,
         autoLoadEntities: true,
         synchronize: true, // Chỉ dùng trong môi trường development
-        ssl: Boolean(JSON.parse(config.get('SSL'))),
+        ssl: true,
       }),
     }),
 
