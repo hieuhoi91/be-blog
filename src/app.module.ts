@@ -7,13 +7,27 @@ import { PostsModule } from './modules/posts/posts.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { TagModule } from './modules/tag/tag.module';
-import { CommentsService } from './modules/comments/comments.service';
-import { CommentsController } from './modules/comments/comments.controller';
 import { CommentsModule } from './modules/comments/comments.module';
 import { WebsocketsModule } from './modules/websockets/websockets.module';
+import { RecommenderModule } from './modules/recommender/recommender.module';
+import * as redisStore from 'cache-manager-redis-store';
+import { CacheModule } from '@nestjs/cache-manager';
+import { RedisClientOptions } from 'redis';
 
 @Module({
   imports: [
+    CacheModule.registerAsync<RedisClientOptions>({
+      imports: [ConfigModule],
+      isGlobal: true,
+      useFactory: (config: ConfigService) => {
+        return {
+          store: redisStore,
+          url: config.get('REDIS_URL'),
+          password: config.get('REDIS_PASSWORD'),
+        };
+      },
+      inject: [ConfigService],
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -35,6 +49,7 @@ import { WebsocketsModule } from './modules/websockets/websockets.module';
         ssl: Boolean(JSON.parse(config.get('SSL'))),
       }),
     }),
+
     AuthModule,
     UsersModule,
     PostsModule,
@@ -43,6 +58,7 @@ import { WebsocketsModule } from './modules/websockets/websockets.module';
     TagModule,
     CommentsModule,
     WebsocketsModule,
+    RecommenderModule,
   ],
 })
 export class AppModule {}

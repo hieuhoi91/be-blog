@@ -11,12 +11,14 @@ import {
   Query,
   Req,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { PostsService } from './posts.service';
 import { SimpleResponse } from 'src/common/dto/page.dto';
 import { PostEntity } from './post.entity';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
 @Controller('posts')
 export class PostsController {
@@ -37,8 +39,8 @@ export class PostsController {
   }
 
   @Get('/:slug')
-  async getPostBySlug(@Param('slug') slug: string) {
-    return await this.postsService.findPostBySlug(slug);
+  async getPostBySlug(@Param('slug') slug: string, @Req() req) {
+    return await this.postsService.findPostBySlug(slug, req.user.id);
   }
 
   @Get('/findbyuser/:id')

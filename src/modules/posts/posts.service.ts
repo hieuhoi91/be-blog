@@ -1,20 +1,22 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
-import { UsersService } from '../users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity } from './post.entity';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../users/user.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(PostEntity)
     private postRepository: Repository<PostEntity>,
+    @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
   async createPost(userId: string, reqCreate: CreatePostDto): Promise<void> {
     try {
@@ -42,7 +44,7 @@ export class PostsService {
     return await this.postRepository.save(post);
   }
 
-  async findPostBySlug(slug: string): Promise<PostEntity> {
+  async findPostBySlug(slug: string, userId: string): Promise<PostEntity> {
     try {
       const posts = await this.postRepository.findOne({
         where: { slug: slug },
@@ -55,6 +57,9 @@ export class PostsService {
           },
         },
       });
+
+      await this.cacheService.set(userId, posts, 86400);
+
       return posts;
     } catch (e) {
       throw new BadRequestException(e.message);
@@ -98,6 +103,9 @@ export class PostsService {
   }
 
   async searchByName(query: string): Promise<PostEntity[]> {
+    const cachedData = await this.cacheService.get('con');
+    console.log('data', cachedData);
+
     return (
       this.postRepository
         .createQueryBuilder('post')
