@@ -13,6 +13,7 @@ import { RecommenderModule } from './modules/recommender/recommender.module';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
 import { RedisClientOptions } from 'redis';
+import { CronModule } from './modules/cron/cron.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { RedisClientOptions } from 'redis';
     CommentsModule,
     WebsocketsModule,
     RecommenderModule,
+    CronModule,
   ],
 })
 export class AppModule {}

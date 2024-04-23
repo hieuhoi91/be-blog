@@ -1,14 +1,8 @@
-import {
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryEntity } from './category.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class CategoriesService {
@@ -35,7 +29,6 @@ export class CategoriesService {
     }
   }
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
   async getAllCategories() {
     return await this.categoryRepository.find({
       select: ['id', 'name', 'description', 'slug'],
