@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserReq, CreateUserRes } from '../users/dto/create-user';
 import { Serialize } from 'src/interceptor/serialize.interceptor';

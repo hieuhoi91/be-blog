@@ -11,6 +11,7 @@ import { RegisterUserDto, ReqLogin, ResLogin } from './dto/auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import { log } from 'console';
 
 @Injectable()
 export class AuthService {

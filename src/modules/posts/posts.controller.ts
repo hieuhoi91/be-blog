@@ -11,7 +11,6 @@ import {
   Query,
   Req,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
@@ -19,10 +18,17 @@ import { PostsService } from './posts.service';
 import { SimpleResponse } from 'src/common/dto/page.dto';
 import { PostEntity } from './post.entity';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
-
+import { PageOptionsDto } from '../../dtos/page.option.dto';
+import { PageDto } from '../../dtos/page.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { verify } from 'jsonwebtoken';
+import { ConfigService } from '@nestjs/config';
 @Controller('posts')
 export class PostsController {
-  constructor(private postsService: PostsService) {}
+  constructor(
+    private postsService: PostsService,
+    private configService: ConfigService,
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post('')
@@ -38,9 +44,33 @@ export class PostsController {
     return new HttpException('Update post successfully', HttpStatus.OK);
   }
 
+  @Get()
+  async getAllPosts(
+    @Query() pageOptionsDto: PageOptionsDto,
+  ): Promise<PageDto<PostEntity>> {
+    return await this.postsService.getAllPosts(pageOptionsDto);
+  }
+
   @Get('/:slug')
   async getPostBySlug(@Param('slug') slug: string, @Req() req) {
-    return await this.postsService.findPostBySlug(slug, req.user.id);
+    const authorizationHeader = req.headers['authorization'];
+    if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
+      return await this.postsService.findPostBySlug(slug, req);
+    }
+
+    const token = authorizationHeader.split(' ')[1];
+    try {
+      const decodedToken: any = verify(
+        token,
+        this.configService.get<string>('SECRET_KEY'),
+      );
+
+      const { id } = decodedToken;
+      // Lấy thông tin người dùng từ decodedToken và sử dụng trong ứng dụng của bạn
+      return await this.postsService.findPostBySlug(slug, id);
+    } catch (error) {
+      throw new Error('Invalid or expired token');
+    }
   }
 
   @Get('/findbyuser/:id')
@@ -62,6 +92,8 @@ export class PostsController {
 
   @Get()
   async searchPost(@Query('title') title: string): Promise<PostEntity[]> {
+    console.log(title);
+
     return await this.postsService.searchByName(title);
   }
 }
