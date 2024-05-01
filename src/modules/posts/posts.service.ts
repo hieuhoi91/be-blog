@@ -82,11 +82,11 @@ export class PostsService {
         },
       });
 
-      if (user_id) {
-        const data = [];
-        await this.cacheService.del(user_id);
-        for (let i = 0; i < data.length; i++) {}
-      }
+      // if (user_id) {
+      //   const data = [];
+      //   await this.cacheService.del(user_id);
+      //   for (let i = 0; i < data.length; i++) {}
+      // }
 
       user_id &&
         (await this.cacheService.store.set(slug.toString(), posts, 86400));
