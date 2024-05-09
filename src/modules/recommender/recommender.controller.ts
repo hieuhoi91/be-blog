@@ -1,14 +1,16 @@
-import { Controller, Post, Body, Req, Get, UseGuards } from '@nestjs/common';
-import { RecommenderService } from './recommender.service';
+import { Controller, Get, UseGuards, Req } from '@nestjs/common';
+import { RecommendationService } from './recommender.service';
 import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 
-@Controller('recommender')
-export class RecommenderController {
-  constructor(private readonly recommenderService: RecommenderService) {}
+@Controller('recommendations')
+export class RecommendationController {
+  constructor(private readonly recommendationService: RecommendationService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  recommend(@Req() req) {
-    return this.recommenderService.recommend(req.user.id);
+  async suggestBasedOnSearchHistory(@Req() req) {
+    const suggestedData =
+      this.recommendationService.suggestBasedOnSearchHistory(req.user.id);
+    return suggestedData;
   }
 }

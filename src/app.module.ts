@@ -14,6 +14,7 @@ import * as redisStore from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
 import { RedisClientOptions } from 'redis';
 import { CronModule } from './modules/cron/cron.module';
+import { RedisModule, RedisService } from 'nestjs-redis';
 
 @Module({
   imports: [

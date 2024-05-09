@@ -55,7 +55,7 @@ export class PostsController {
   async getPostBySlug(@Param('slug') slug: string, @Req() req) {
     const authorizationHeader = req.headers['authorization'];
     if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
-      return await this.postsService.findPostBySlug(slug, req);
+      return await this.postsService.findPostBySlug(slug);
     }
 
     const token = authorizationHeader.split(' ')[1];
@@ -90,10 +90,32 @@ export class PostsController {
     return new HttpException('Delete post successfully', HttpStatus.OK);
   }
 
-  @Get()
-  async searchPost(@Query('title') title: string): Promise<PostEntity[]> {
+  @Get('/search')
+  async searchPost(
+    @Query('title') title: string,
+    @Req() req,
+  ): Promise<PostEntity[]> {
     console.log(title);
 
-    return await this.postsService.searchByName(title);
+    const authorizationHeader = req.headers['authorization'];
+    if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
+      console.log(title);
+
+      return await this.postsService.searchByName(title, req);
+    }
+
+    const token = authorizationHeader.split(' ')[1];
+    try {
+      const decodedToken: any = verify(
+        token,
+        this.configService.get<string>('SECRET_KEY'),
+      );
+
+      const { id } = decodedToken;
+      // Lấy thông tin người dùng từ decodedToken và sử dụng trong ứng dụng của bạn
+      return await this.postsService.searchByName(title, id);
+    } catch (error) {
+      throw new Error('Invalid or expired token');
+    }
   }
 }
