@@ -14,15 +14,16 @@ import { PageOptionsDto } from '../../dtos/page.option.dto';
 import { PageMetaDto } from '../../dtos/page.meta.dto';
 import { PageDto } from '../../dtos/page.dto';
 import { RecommendationService } from '../recommender/recommender.service';
+import * as Redis from 'ioredis';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(PostEntity)
     private postRepository: Repository<PostEntity>,
-    @Inject(CACHE_MANAGER) private cacheService: Cache,
-
     private recommendationService: RecommendationService,
+    private redisService: RedisService,
   ) {}
 
   async createPost(userId: string, reqCreate: CreatePostDto): Promise<void> {
@@ -36,8 +37,6 @@ export class PostsService {
       });
 
       await this.postRepository.save(post);
-
-      this.recommendationService.train(post);
     } catch (e) {
       throw new BadRequestException(e.message);
     }
@@ -66,6 +65,8 @@ export class PostsService {
       const itemCount = await queryBuilder.getCount();
       const { entities } = await queryBuilder.getRawAndEntities();
 
+      this.recommendationService.train(entities);
+
       const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
 
       return new PageDto(entities, pageMetaDto);
@@ -88,27 +89,13 @@ export class PostsService {
         },
       });
 
-      console.log(user_id, posts);
-
-      user_id && (await this.pushToList(user_id, JSON.stringify(posts)));
-
-      this.recommendationService.train(await this.cacheService.get(user_id));
+      user_id &&
+        (await this.redisService.pushToList(user_id, JSON.stringify(posts)));
 
       return posts;
     } catch (e) {
-      console.log(e);
-
-      // throw new BadRequestException(e.message);
+      throw new BadRequestException(e.message);
     }
-  }
-
-  async pushToList(key: string, value: string) {
-    const list: string[] = (await this.cacheService.get(key)) || [];
-    console.log(list);
-
-    list.push(value);
-
-    await this.cacheService.set(key, value);
   }
 
   async findPostsByUserId(userId: string): Promise<PostEntity[]> {
@@ -147,7 +134,10 @@ export class PostsService {
     return await this.postRepository.delete(postId);
   }
 
-  async searchByName(query: string, user_id: string): Promise<PostEntity[]> {
+  async searchByName(query: string, user_id?: string): Promise<PostEntity[]> {
+    user_id &&
+      (await this.redisService.pushToList(user_id, JSON.stringify(query)));
+
     const dataSearchResult = await this.postRepository
       .createQueryBuilder('posts')
       .where('LOWER(posts.title) ILIKE :title', {
@@ -158,9 +148,19 @@ export class PostsService {
       // })
       .getMany();
 
-    // user_id &&
-    //   (await this.pushToList(user_id, JSON.stringify(dataSearchResult)));
-
     return dataSearchResult;
+  }
+
+  async trainData() {
+    const posts = await this.postRepository.find({
+      select: ['slug', 'title', 'description'],
+    });
+    this.recommendationService.train(posts);
+    return posts;
+  }
+
+  async recommended(user_id: string) {
+    const searchHistory = await this.redisService.getList(user_id);
+    return this.recommendationService.classify(searchHistory);
   }
 }

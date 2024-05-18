@@ -4,11 +4,17 @@ import { PostsService } from './posts.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostEntity } from './post.entity';
 import { CategoryEntity } from '../categories/category.entity';
-import { RecommendationService } from '../recommender/recommender.service';
+import { RedisModule } from '../redis/redis.module';
+import { RecommenderModule } from '../recommender/recommender.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PostEntity, CategoryEntity])],
+  imports: [
+    TypeOrmModule.forFeature([PostEntity, CategoryEntity]),
+    RedisModule,
+    RecommenderModule,
+  ],
   controllers: [PostsController],
-  providers: [PostsService, RecommendationService],
+  providers: [PostsService],
+  exports: [PostsService],
 })
 export class PostsModule {}

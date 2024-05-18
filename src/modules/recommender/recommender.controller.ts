@@ -6,11 +6,11 @@ import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 export class RecommendationController {
   constructor(private readonly recommendationService: RecommendationService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  async suggestBasedOnSearchHistory(@Req() req) {
-    const suggestedData =
-      this.recommendationService.suggestBasedOnSearchHistory(req.user.id);
-    return suggestedData;
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Get()
+  // async suggestBasedOnSearchHistory(@Req() req) {
+  //   const suggestedData =
+  //     this.recommendationService.suggestBasedOnSearchHistory(req.user.id);
+  //   return suggestedData;
+  // }
 }

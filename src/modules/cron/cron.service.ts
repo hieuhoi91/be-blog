@@ -9,10 +9,7 @@ export default class CronService {
   @Cron(CronExpression.EVERY_5_MINUTES)
   async callAPI() {
     try {
-      const response = await axios.get(
-        'https://be-blog-mzcc.onrender.com/categories',
-      );
-      console.log('API response:', response.data);
+      const _ = await axios.get('https://be-blog-mzcc.onrender.com/categories');
     } catch (error) {
       console.error('Error calling API:', error.message);
     }

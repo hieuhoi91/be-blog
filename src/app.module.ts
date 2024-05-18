@@ -10,30 +10,29 @@ import { TagModule } from './modules/tag/tag.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { WebsocketsModule } from './modules/websockets/websockets.module';
 import { RecommenderModule } from './modules/recommender/recommender.module';
-import * as redisStore from 'cache-manager-redis-store';
-import { CacheModule } from '@nestjs/cache-manager';
-import { RedisClientOptions } from 'redis';
 import { CronModule } from './modules/cron/cron.module';
-import { RedisModule, RedisService } from 'nestjs-redis';
+import { ModuleRef } from '@nestjs/core';
+import { RedisModule } from './modules/redis/redis.module';
 
 @Module({
   imports: [
-    CacheModule.registerAsync<RedisClientOptions>({
-      imports: [ConfigModule],
-      isGlobal: true,
-      useFactory: (config: ConfigService) => {
-        return {
-          store: redisStore,
-          url: config.get('REDIS_URL'),
-          password: config.get('REDIS_PASSWORD'),
-        };
-      },
-      inject: [ConfigService],
-    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
+
+    // RedisModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: (config: ConfigService) => {
+    //     return {
+    //       store: redisStore,
+    //       url: config.get('REDIS_URL'),
+    //       password: config.get('REDIS_PASSWORD'),
+    //     };
+    //   },
+    //   inject: [ConfigService],
+    // }),
+
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -62,6 +61,9 @@ import { RedisModule, RedisService } from 'nestjs-redis';
     WebsocketsModule,
     RecommenderModule,
     CronModule,
+    RedisModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private readonly moduleRef: ModuleRef) {}
+}
