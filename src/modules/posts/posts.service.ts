@@ -16,15 +16,27 @@ import { PageDto } from '../../dtos/page.dto';
 import { RecommendationService } from '../recommender/recommender.service';
 import * as Redis from 'ioredis';
 import { RedisService } from '../redis/redis.service';
+import { Gorse } from 'gorsejs';
+import { CategoriesService } from '../categories/categories.service';
+import { faker } from '@faker-js/faker';
+import { CategoryEntity } from '../categories/category.entity';
+import { read } from 'fs';
 
 @Injectable()
 export class PostsService {
+  private gorseClient: Gorse<string>;
   constructor(
     @InjectRepository(PostEntity)
     private postRepository: Repository<PostEntity>,
     private recommendationService: RecommendationService,
+    private cateService: CategoriesService,
     private redisService: RedisService,
-  ) {}
+  ) {
+    this.gorseClient = new Gorse({
+      endpoint: 'http://192.168.1.244:8088',
+      secret: '',
+    });
+  }
 
   async createPost(userId: string, reqCreate: CreatePostDto): Promise<void> {
     try {
@@ -35,8 +47,30 @@ export class PostsService {
         category_id: reqCreate.category_id,
         user_id: userId,
       });
-
       await this.postRepository.save(post);
+    } catch (e) {
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async createFakePost(userId: string): Promise<void> {
+    const cate = await this.cateService.getAllCategories();
+
+    try {
+      for (let i = 1; i < 100; i++) {
+        const randomCate = (arr: CategoryEntity[]) => {
+          const index = Math.floor(Math.random() * arr.length);
+          return arr[index].id;
+        };
+        const post = this.postRepository.create({
+          title: faker.lorem.sentences({ min: 1, max: 3 }),
+          thumbnail: faker.image.urlPicsumPhotos({ width: 250, height: 250 }),
+          description: faker.lorem.paragraphs(5),
+          category_id: randomCate(cate),
+          user_id: userId,
+        });
+        await this.postRepository.save(post);
+      }
     } catch (e) {
       throw new BadRequestException(e.message);
     }
@@ -44,6 +78,7 @@ export class PostsService {
 
   async updatePost(post_id: string, attr: Partial<CreatePostDto>) {
     const post = await this.postRepository.findOneBy({ id: post_id });
+
     if (!post) {
       throw new NotFoundException('post not found');
     }
@@ -89,8 +124,25 @@ export class PostsService {
         },
       });
 
+      console.log(user_id);
+      console.log(posts);
+
       user_id &&
-        (await this.redisService.pushToList(user_id, JSON.stringify(posts)));
+        this.gorseClient.insertFeedbacks([
+          {
+            FeedbackType: 'like',
+            UserId: user_id,
+            ItemId: posts.id,
+            Timestamp: new Date(),
+          },
+          {
+            FeedbackType: 'read',
+            UserId: user_id,
+            ItemId: posts.id,
+            Timestamp: new Date(),
+          },
+        ]);
+      // await this.redisService.pushToList(user_id, JSON.stringify(posts));
 
       return posts;
     } catch (e) {
@@ -153,14 +205,26 @@ export class PostsService {
 
   async trainData() {
     const posts = await this.postRepository.find({
-      select: ['slug', 'title', 'description'],
+      relations: ['categories'],
     });
-    this.recommendationService.train(posts);
+    posts.forEach((post) => {
+      this.gorseClient.upsertItem({
+        ItemId: post.id,
+        IsHidden: false,
+        Timestamp: post.createdAt,
+        Categories: [post.categories.name],
+        Comment: post.title,
+        Labels: [post.categories.name],
+      });
+    });
+    // this.recommendationService.train(posts);
+
     return posts;
   }
 
   async recommended(user_id: string) {
-    const searchHistory = await this.redisService.getList(user_id);
-    return this.recommendationService.classify(searchHistory);
+    // const searchHistory = await this.redisService.getList(user_id);
+    // return this.recommendationService.classify(searchHistory);
+    // return this.gorseClient.getRecommend();
   }
 }

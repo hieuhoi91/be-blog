@@ -36,9 +36,16 @@ export class PostsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('fake')
+  async createFakePost(@Req() req) {
+    const post = await this.postsService.createFakePost(req.user.id);
+    return new SimpleResponse(post, 'Success post created');
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Patch('/:id')
-  async updatePost(@Param('id') idPost: string, @Body() attr: CreatePostDto) {
-    await this.postsService.updatePost(idPost, attr);
+  async updatePost(@Param('id') post_id: string, @Body() attr: CreatePostDto) {
+    await this.postsService.updatePost(post_id, attr);
     return new HttpException('Update post successfully', HttpStatus.OK);
   }
 

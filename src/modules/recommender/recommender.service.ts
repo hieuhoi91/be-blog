@@ -25,7 +25,6 @@ export class RecommendationService {
     });
 
     const model = JSON.stringify(this.classifier);
-    console.log(model);
 
     await this.redisService.set('classifier_model', model, 999999999999999);
     this.classifier.train();

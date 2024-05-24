@@ -13,6 +13,7 @@ import { RecommenderModule } from './modules/recommender/recommender.module';
 import { CronModule } from './modules/cron/cron.module';
 import { ModuleRef } from '@nestjs/core';
 import { RedisModule } from './modules/redis/redis.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { RedisModule } from './modules/redis/redis.module';
     RecommenderModule,
     CronModule,
     RedisModule,
+    PaymentModule,
   ],
 })
 export class AppModule {
