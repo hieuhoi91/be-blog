@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,19 +7,15 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity } from './post.entity';
 import { Repository } from 'typeorm';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 import { PageOptionsDto } from '../../dtos/page.option.dto';
 import { PageMetaDto } from '../../dtos/page.meta.dto';
 import { PageDto } from '../../dtos/page.dto';
 import { RecommendationService } from '../recommender/recommender.service';
-import * as Redis from 'ioredis';
 import { RedisService } from '../redis/redis.service';
 import { Gorse } from 'gorsejs';
 import { CategoriesService } from '../categories/categories.service';
 import { faker } from '@faker-js/faker';
 import { CategoryEntity } from '../categories/category.entity';
-import { read } from 'fs';
 
 @Injectable()
 export class PostsService {
@@ -33,7 +28,7 @@ export class PostsService {
     private redisService: RedisService,
   ) {
     this.gorseClient = new Gorse({
-      endpoint: 'http://192.168.1.244:8088',
+      endpoint: 'http://192.168.1.116:8088',
       secret: '',
     });
   }
@@ -203,6 +198,10 @@ export class PostsService {
     return dataSearchResult;
   }
 
+  getPostPopular() {
+    return this.gorseClient.getPopular({ cursorOptions: { n: 10 } });
+  }
+
   async trainData() {
     const posts = await this.postRepository.find({
       relations: ['categories'],
@@ -223,8 +222,10 @@ export class PostsService {
   }
 
   async recommended(user_id: string) {
-    // const searchHistory = await this.redisService.getList(user_id);
+    return this.gorseClient.getRecommend({
+      userId: user_id,
+      cursorOptions: { n: 4 },
+    });
     // return this.recommendationService.classify(searchHistory);
-    // return this.gorseClient.getRecommend();
   }
 }

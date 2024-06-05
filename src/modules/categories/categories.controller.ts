@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { CategoriesService } from './categories.service';
 
@@ -19,5 +27,10 @@ export class CategoriesController {
   @Get('/:id')
   async getCategory(@Param('id') id: string) {
     return await this.categoriesService.getCategory(id);
+  }
+
+  @Delete('/:id')
+  async deleteCategory(@Param('id') id: string) {
+    return await this.categoriesService.deleteCategory(id);
   }
 }

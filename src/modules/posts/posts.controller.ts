@@ -56,11 +56,14 @@ export class PostsController {
     return await this.postsService.getAllPosts(pageOptionsDto);
   }
 
+  @Get('/popular')
+  async getPopularPosts() {
+    return await this.postsService.getPostPopular();
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get('/recommended')
   async getPostsRecommended(@Req() req) {
-    console.log(1);
-
     return await this.postsService.recommended(req.user.id);
   }
 

@@ -38,4 +38,8 @@ export class CategoriesService {
   async getCategory(id: string) {
     return this.categoryRepository.findOneBy({ id: id });
   }
+
+  async deleteCategory(id: string) {
+    return this.categoryRepository.delete(id);
+  }
 }

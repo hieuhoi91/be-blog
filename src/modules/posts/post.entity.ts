@@ -56,7 +56,9 @@ export class PostEntity {
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
-  @ManyToOne(() => CategoryEntity, (categories) => categories.posts)
+  @ManyToOne(() => CategoryEntity, (categories) => categories.posts, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'category_id' })
   categories: CategoryEntity;
 
