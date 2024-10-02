@@ -12,7 +12,7 @@ import { WebsocketsModule } from './modules/websockets/websockets.module';
 import { RecommenderModule } from './modules/recommender/recommender.module';
 import { CronModule } from './modules/cron/cron.module';
 import { ModuleRef } from '@nestjs/core';
-import { RedisModule } from './modules/redis/redis.module';
+// import { RedisModule } from './modules/redis/redis.module';
 import { PaymentModule } from './payment/payment.module';
 
 @Module({
@@ -62,7 +62,7 @@ import { PaymentModule } from './payment/payment.module';
     WebsocketsModule,
     RecommenderModule,
     CronModule,
-    RedisModule,
+    // RedisModule,
     PaymentModule,
   ],
 })
