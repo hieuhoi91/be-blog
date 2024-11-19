@@ -60,7 +60,7 @@ import { PaymentModule } from './payment/payment.module';
     TagModule,
     CommentsModule,
     WebsocketsModule,
-    RecommenderModule,
+    // RecommenderModule,
     CronModule,
     // RedisModule,
     PaymentModule,

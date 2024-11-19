@@ -10,8 +10,8 @@ import { Repository } from 'typeorm';
 import { PageOptionsDto } from '../../dtos/page.option.dto';
 import { PageMetaDto } from '../../dtos/page.meta.dto';
 import { PageDto } from '../../dtos/page.dto';
-import { RecommendationService } from '../recommender/recommender.service';
-import { RedisService } from '../redis/redis.service';
+// import { RecommendationService } from '../recommender/recommender.service';
+// import { RedisService } from '../redis/redis.service';
 import { Gorse } from 'gorsejs';
 import { CategoriesService } from '../categories/categories.service';
 import { faker } from '@faker-js/faker';
@@ -19,18 +19,18 @@ import { CategoryEntity } from '../categories/category.entity';
 
 @Injectable()
 export class PostsService {
-  private gorseClient: Gorse<string>;
+  // private gorseClient: Gorse<string>;
   constructor(
     @InjectRepository(PostEntity)
     private postRepository: Repository<PostEntity>,
-    private recommendationService: RecommendationService,
+    // private recommendationService: RecommendationService,
     private cateService: CategoriesService,
-    private redisService: RedisService,
+    // private redisService: RedisService,
   ) {
-    this.gorseClient = new Gorse({
-      endpoint: 'http://192.168.1.116:8088',
-      secret: '',
-    });
+    // this.gorseClient = new Gorse({
+    //   endpoint: 'http://192.168.1.116:8088',
+    //   secret: '',
+    // });
   }
 
   async createPost(userId: string, reqCreate: CreatePostDto): Promise<void> {
@@ -95,7 +95,7 @@ export class PostsService {
       const itemCount = await queryBuilder.getCount();
       const { entities } = await queryBuilder.getRawAndEntities();
 
-      this.recommendationService.train(entities);
+      // this.recommendationService.train(entities);
 
       const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
 
@@ -122,21 +122,21 @@ export class PostsService {
       console.log(user_id);
       console.log(posts);
 
-      user_id &&
-        this.gorseClient.insertFeedbacks([
-          {
-            FeedbackType: 'like',
-            UserId: user_id,
-            ItemId: posts.id,
-            Timestamp: new Date(),
-          },
-          {
-            FeedbackType: 'read',
-            UserId: user_id,
-            ItemId: posts.id,
-            Timestamp: new Date(),
-          },
-        ]);
+      // user_id &&
+      //   this.gorseClient.insertFeedbacks([
+      //     {
+      //       FeedbackType: 'like',
+      //       UserId: user_id,
+      //       ItemId: posts.id,
+      //       Timestamp: new Date(),
+      //     },
+      //     {
+      //       FeedbackType: 'read',
+      //       UserId: user_id,
+      //       ItemId: posts.id,
+      //       Timestamp: new Date(),
+      //     },
+      //   ]);
       // await this.redisService.pushToList(user_id, JSON.stringify(posts));
 
       return posts;
@@ -182,50 +182,45 @@ export class PostsService {
   }
 
   async searchByName(query: string, user_id?: string): Promise<PostEntity[]> {
-    user_id &&
-      (await this.redisService.pushToList(user_id, JSON.stringify(query)));
+    // user_id &&
+    //   (await this.redisService.pushToList(user_id, JSON.stringify(query)));
 
     const dataSearchResult = await this.postRepository
       .createQueryBuilder('posts')
       .where('LOWER(posts.title) ILIKE :title', {
         title: `%${query.toLowerCase()}%`,
       })
-      // .orWhere('LOWER(post.description) ILIKE :title', {
-      //   title: `%${query.toLowerCase()}%`,
-      // })
       .getMany();
 
     return dataSearchResult;
   }
 
-  getPostPopular() {
-    return this.gorseClient.getPopular({ cursorOptions: { n: 10 } });
-  }
+  // getPostPopular() {
+  //   return this.gorseClient.getPopular({ cursorOptions: { n: 10 } });
+  // }
 
-  async trainData() {
-    const posts = await this.postRepository.find({
-      relations: ['categories'],
-    });
-    posts.forEach((post) => {
-      this.gorseClient.upsertItem({
-        ItemId: post.id,
-        IsHidden: false,
-        Timestamp: post.createdAt,
-        Categories: [post.categories.name],
-        Comment: post.title,
-        Labels: [post.categories.name],
-      });
-    });
-    // this.recommendationService.train(posts);
+  // async trainData() {
+  //   const posts = await this.postRepository.find({
+  //     relations: ['categories'],
+  //   });
+  //   posts.forEach((post) => {
+  //     this.gorseClient.upsertItem({
+  //       ItemId: post.id,
+  //       IsHidden: false,
+  //       Timestamp: post.createdAt,
+  //       Categories: [post.categories.name],
+  //       Comment: post.title,
+  //       Labels: [post.categories.name],
+  //     });
+  //   });
 
-    return posts;
-  }
+  //   return posts;
+  // }
 
-  async recommended(user_id: string) {
-    return this.gorseClient.getRecommend({
-      userId: user_id,
-      cursorOptions: { n: 4 },
-    });
-    // return this.recommendationService.classify(searchHistory);
-  }
+  // async recommended(user_id: string) {
+  //   return this.gorseClient.getRecommend({
+  //     userId: user_id,
+  //     cursorOptions: { n: 4 },
+  //   });
+  // }
 }

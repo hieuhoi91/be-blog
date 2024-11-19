@@ -56,45 +56,42 @@ export class PostsController {
     return await this.postsService.getAllPosts(pageOptionsDto);
   }
 
-  @Get('/popular')
-  async getPopularPosts() {
-    return await this.postsService.getPostPopular();
-  }
+  // @Get('/popular')
+  // async getPopularPosts() {
+  //   return await this.postsService.getPostPopular();
+  // }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('/recommended')
-  async getPostsRecommended(@Req() req) {
-    return await this.postsService.recommended(req.user.id);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Get('/recommended')
+  // async getPostsRecommended(@Req() req) {
+  //   return await this.postsService.recommended(req.user.id);
+  // }
 
-  @Get('/traindata')
-  async trainData() {
-    return await this.postsService.trainData();
-  }
+  // @Get('/traindata')
+  // async trainData() {
+  //   return await this.postsService.trainData();
+  // }
 
   @Get('/search')
-  async searchPost(
-    @Query('title') title: string,
-    @Req() req,
-  ): Promise<PostEntity[]> {
-    const authorizationHeader = req.headers['authorization'];
-    if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
-      return await this.postsService.searchByName(title);
-    }
+  async searchPost(@Query('title') title: string, @Req() req) {
+    // const authorizationHeader = req.headers['authorization'];
+    // if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
+    return await this.postsService.searchByName(title);
+    // }
 
-    const token = authorizationHeader.split(' ')[1];
-    try {
-      const decodedToken: any = verify(
-        token,
-        this.configService.get<string>('SECRET_KEY'),
-      );
+    // const token = authorizationHeader.split(' ')[1];
+    // try {
+    //   const decodedToken: any = verify(
+    //     token,
+    //     this.configService.get<string>('SECRET_KEY'),
+    //   );
 
-      const { id } = decodedToken;
-      // Lấy thông tin người dùng từ decodedToken và sử dụng trong ứng dụng của bạn
-      return await this.postsService.searchByName(title, id);
-    } catch (error) {
-      throw new Error('Invalid or expired token');
-    }
+    //   const { id } = decodedToken;
+    //   // Lấy thông tin người dùng từ decodedToken và sử dụng trong ứng dụng của bạn
+    //   // return await this.postsService.searchByName(title, id);
+    // } catch (error) {
+    //   throw new Error('Invalid or expired token');
+    // }
   }
 
   @Get('/:slug')

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import natural from 'natural';
 import { BayesClassifier, WordTokenizer } from 'natural';
 import { PostEntity } from '../posts/post.entity';
-import { RedisService } from '../redis/redis.service';
+// import { RedisService } from '../redis/redis.service';
 import { PostsService } from '../posts/posts.service';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class RecommendationService {
   tokenizer: natural.WordTokenizer;
   classifier: natural.BayesClassifier;
 
-  constructor(private redisService: RedisService) {
+  constructor(private redisService: any) {
     this.tokenizer = new WordTokenizer();
     this.classifier = new BayesClassifier();
   }
